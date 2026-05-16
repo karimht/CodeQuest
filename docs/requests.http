@@ -1,0 +1,136 @@
+### CodeQuest API — Requêtes de test
+### À ouvrir avec l'extension "REST Client" de VS Code
+### ou à copier dans Postman / Insomnia / curl
+
+@baseUrl = http://localhost:3000/api
+
+# =========================================================
+# Health check
+# =========================================================
+GET {{baseUrl}}/health
+
+# =========================================================
+# USERS
+# =========================================================
+
+### Top 10 joueurs par ELO
+GET {{baseUrl}}/users?sort=elo&limit=10
+
+### Profil détaillé d'un joueur (avec stats, badges, guildes)
+GET {{baseUrl}}/users/1
+
+### Historique de tentatives d'un joueur
+GET {{baseUrl}}/users/1/attempts?limit=20
+
+### Liste des amis d'un joueur
+GET {{baseUrl}}/users/1/friends
+
+### Créer un nouveau joueur
+POST {{baseUrl}}/users
+Content-Type: application/json
+
+{
+  "username": "nouveau_joueur",
+  "email": "nouveau@codequest.io",
+  "password_hash": "$2b$10$dummyhash",
+  "display_name": "Nouveau Joueur",
+  "country_code": "FR"
+}
+
+# =========================================================
+# CHALLENGES
+# =========================================================
+
+### Liste tous les challenges
+GET {{baseUrl}}/challenges
+
+### Filtres : difficulté + tag
+GET {{baseUrl}}/challenges?difficulty=hard&tag=dp
+
+### Recherche par titre
+GET {{baseUrl}}/challenges?search=fibo
+
+### Détail d'un challenge
+GET {{baseUrl}}/challenges/fibonacci-n
+
+### Classement d'un challenge (meilleurs temps)
+GET {{baseUrl}}/challenges/fizzbuzz/leaderboard
+
+### Stats par tag
+GET {{baseUrl}}/challenges/stats/by-tag
+
+# =========================================================
+# DUELS
+# =========================================================
+
+### Liste des duels actifs
+GET {{baseUrl}}/duels?status=active
+
+### Duels d'un joueur particulier
+GET {{baseUrl}}/duels?user_id=1
+
+### Détail d'un duel (avec ses tentatives)
+GET {{baseUrl}}/duels/1
+
+### Créer un duel (utilise la procédure stockée)
+POST {{baseUrl}}/duels
+Content-Type: application/json
+
+{
+  "challenger_id": 1,
+  "opponent_id": 5,
+  "challenge_id": 7,
+  "xp_stake": 100
+}
+
+### Démarrer un duel
+PATCH {{baseUrl}}/duels/11/start
+
+### Terminer un duel (déclenche le trigger qui recalcule l'ELO !)
+PATCH {{baseUrl}}/duels/10/complete
+Content-Type: application/json
+
+{
+  "winner_id": 1
+}
+
+# =========================================================
+# ATTEMPTS
+# =========================================================
+
+### Activity feed (tentatives récentes)
+GET {{baseUrl}}/attempts/recent?limit=10
+
+### Soumettre une tentative (les triggers attribuent XP + badges)
+POST {{baseUrl}}/attempts
+Content-Type: application/json
+
+{
+  "user_id": 1,
+  "challenge_id": 5,
+  "language": "python",
+  "source_code": "def fib(n): return n if n < 2 else fib(n-1) + fib(n-2)",
+  "verdict": "passed",
+  "execution_ms": 142,
+  "tests_passed": 3,
+  "tests_total": 3
+}
+
+# =========================================================
+# LEADERBOARD
+# =========================================================
+
+### Classement global (vue matérialisée)
+GET {{baseUrl}}/leaderboard?limit=20
+
+### Classement filtré par tier
+GET {{baseUrl}}/leaderboard?tier=Master
+
+### Top rivalités (paires de joueurs qui se défient le plus)
+GET {{baseUrl}}/leaderboard/rivalries
+
+### Recommandations pour un joueur (collaborative filtering)
+GET {{baseUrl}}/leaderboard/recommendations/1
+
+### Rafraîchir la vue matérialisée
+POST {{baseUrl}}/leaderboard/refresh
