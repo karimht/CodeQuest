@@ -216,9 +216,3 @@ Chaque concept du programme typique de BDD est illustré dans ce projet :
 - **Intégrité référentielle** → toutes les FK avec actions appropriées
 - **Triggers et procédures** → logique métier côté BDD
 - **Patterns avancés** → JSONB, CTE récursives, window functions
-
----
-
-## 📝 Licence
-
-Projet académique — libre d'usage pour fins éducatives.
